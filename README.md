@@ -15,16 +15,16 @@ npm i typed
 ```
 
 ## Features
-- [ ] Italics
-- [ ] Bold
-- [ ] Headings (1-3)
+- [x] Italics
+- [x] Bold
+- [x] Headings (1-3)
 - [ ] Link
 - [ ] Image
 - [ ] Blockquote
 - [ ] List
 - [ ] Numbered List
-- [ ] Horizontal Rule
-- [ ] Inline Code
+- [x] Horizontal Rule
+- [x] Inline Code
 - [ ] Code Block
 - [ ] Table
 - [ ] Task List

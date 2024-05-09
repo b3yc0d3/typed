@@ -1,3 +1,1 @@
-function test(): void {
-    console.log("hello world!");
-}
+export { TypedParser } from "./parser";

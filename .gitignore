@@ -5,6 +5,7 @@
 /coverage.data
 /coverage
 /dist
+_test.ts
 
 logs
 *.log
