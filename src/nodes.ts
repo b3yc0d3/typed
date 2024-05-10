@@ -33,6 +33,17 @@ export class CodeNode extends TextNode {
     }
 }
 
+export class LinkNode extends MarkdownNode {
+    title: MarkdownNode[];
+    url: string;
+    constructor(title: MarkdownNode[], url: string) {
+        super("LinkNode");
+
+        this.title = title;
+        this.url = url;
+    }
+}
+
 
 export class HorizontalRule extends MarkdownNode {
     constructor() {

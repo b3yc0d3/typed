@@ -18,7 +18,7 @@ export class FragmentParser {
         let char: string | undefined | null;
         let content: string = "";
         let hasTerminated: boolean = false;
-        let rewindCount = 0;
+        var rewindCount = 0;
 
         while ((char = lexer.next()) !== null) {
             content = "";
@@ -103,6 +103,46 @@ export class FragmentParser {
                 } else {
                     lexer.rewindCharacters(rewindCount);
                 }
+            } else if (char == '\u005B') {
+                rewindCount = 1;
+
+                let title: string = "";
+                let url: string = "";
+
+                let nestedChar: string | null;
+                while ((nestedChar = lexer.next()) != null) {
+                    if (nestedChar == '\u005D') {
+                        hasTerminated = true;
+                        break;
+                    }
+                    title += nestedChar;
+                    rewindCount++;
+                }
+
+                if (hasTerminated == true && lexer.currentCharacter == '\u0028') {
+                    hasTerminated = false;
+                    lexer.next();
+
+                    nestedChar = "";
+                    while ((nestedChar = lexer.next()) != null) {
+                        if (nestedChar == '\u0029') {
+                            hasTerminated = true;
+                            break;
+                        }
+                        url += nestedChar;
+                        rewindCount++;
+                    }
+
+                    if (hasTerminated == true) {
+                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(title).parse();
+
+                        result.push(new Nodes.LinkNode(titleNodes, url));
+                        continue;
+                    }
+
+                }
+
+                lexer.rewindCharacters(rewindCount);
             }
 
             let lastNode = result[result.length - 1];
@@ -137,7 +177,7 @@ export class BlockParser {
 
             if (fragment.startsWith("\u0023")) {
                 let content = fragment.replace(/\u0023/g, '').trim();
-                let headingLevel = (fragment.length - content.length) - 1
+                let headingLevel = (fragment.length - content.length) - 1;
 
                 result.push(new Nodes.HeadingNode(content, headingLevel));
                 continue;
@@ -145,7 +185,7 @@ export class BlockParser {
 
             let fragments = new FragmentParser(fragment.trim()).parse();
             if (fragments.length > 0)
-                result.push(new Nodes.ParagraphNode(fragments));
+                result.push(...fragments);
         }
 
         return result;
@@ -174,7 +214,42 @@ export class TypedParser {
 
             let blocks = new BlockParser(block || "").parse();
             if (blocks.length > 0)
-                result.push(...blocks);
+                result.push(...this.groupNodes(blocks));
+        }
+
+        return result;
+    }
+
+    /**
+     * Groups MarkdownNodes to "Paragraphs" etc.
+     * @param nodes List of MarkdownNodes
+     * @returns List of grouped MarkdownNodes
+     */
+    private groupNodes(nodes: Nodes.MarkdownNode[]): Nodes.MarkdownNode[] {
+        var result: Nodes.MarkdownNode[] = [];
+        const getLastNode = (nl: Nodes.MarkdownNode[]): Nodes.MarkdownNode | null => {
+            if (nl.length <= 0)
+                return null;
+
+            return nl[nl.length - 1];
+        }
+
+        for (let node of nodes) {
+            let lastNode = getLastNode(result);
+
+            switch (true) {
+                case node instanceof Nodes.HeadingNode:
+                    result.push(node);
+                    continue;
+
+                default:
+                    if (!(lastNode instanceof Nodes.ParagraphNode)) {
+                        result.push(new Nodes.ParagraphNode([node]));
+                    } else {
+                        lastNode.nodes.push(node);
+                    }
+                    break;
+            }
         }
 
         return result;

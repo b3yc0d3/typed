@@ -18,7 +18,7 @@ npm i typed
 - [x] Italics
 - [x] Bold
 - [x] Headings (1-3)
-- [ ] Link
+- [x] Link
 - [ ] Image
 - [ ] Blockquote
 - [ ] List

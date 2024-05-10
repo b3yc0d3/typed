@@ -7,6 +7,7 @@ describe("FragmentParser", () => {
         ["Bold", "**text**", [new Nodes.BoldNode("text")]],
         ["Italic", "*text*", [new Nodes.ItalicNode("text")]],
         ["Code", "`text`", [new Nodes.CodeNode("text")]],
+        ["Link", "[Title](https://example.com/)", [new Nodes.LinkNode([new Nodes.TextNode("Title")], "https://example.com/")]],
     ])("%p", (t: string, input: string, result: Nodes.MarkdownNode[]) => {
         let parser = new FragmentParser(input);
         let nodes = parser.parse();
@@ -20,6 +21,7 @@ describe("FragmentParser invalid inputs", () => {
         ["Bold", "**text", [new Nodes.TextNode("**text")]],
         ["Italic", "*text", [new Nodes.TextNode("*text")]],
         ["Code", "`text", [new Nodes.TextNode("`text")]],
+        ["Link", "[Title(https://example.com/)", [new Nodes.TextNode("[Title(https://example.com/)")]],
     ])("%p", (t: string, input: string, result: Nodes.MarkdownNode[]) => {
         let parser = new FragmentParser(input);
         let nodes = parser.parse();
@@ -43,9 +45,7 @@ describe("BlockParser", () => {
         let nodes = parser.parse();
 
         expect(nodes).toStrictEqual([
-            new Nodes.ParagraphNode([
-                new Nodes.TextNode(text),
-            ]),
+            new Nodes.TextNode(text),
         ]);
     });
 
