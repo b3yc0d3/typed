@@ -1,0 +1,12 @@
+node_modules
+tests
+/test_project
+/coverage.data
+/coverage
+/dist
+_test.ts
+src
+tsconfig.json
+tsup.config.ts
+jest.config.
+.gitignore
