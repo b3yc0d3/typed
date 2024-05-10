@@ -24,10 +24,7 @@ export class Lexer {
      * @param splitter Splitter used to tokenize
      * @returns New Lexer or `null`
      */
-    static init(expression: string, splitter: string): Lexer | null {
-        if (!splitter.length || !expression.length)
-            return null;
-
+    static init(expression: string, splitter: string): Lexer {
         let lexems = expression.split(splitter);
         return new Lexer(lexems);
     }

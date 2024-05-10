@@ -166,13 +166,11 @@ export class BlockParser {
 
     parse(): Nodes.MarkdownNode[] {
         var lexer = Lexer.init(this.block, "\n");
-        if (!lexer)
-            return [];
 
         var result: Nodes.MarkdownNode[] = [];
 
         let fragment: string | undefined | null;
-        while ((fragment = lexer?.next()) !== null) {
+        while ((fragment = lexer.next()) !== null) {
             fragment = fragment.trim();
 
             if (fragment.startsWith("\u0023")) {
@@ -206,13 +204,13 @@ export class TypedParser {
         var result: Nodes.MarkdownNode[] = [];
 
         let block: string | null | undefined = "";
-        while ((block = lexer?.next()) !== null) {
+        while ((block = lexer.next()) !== null) {
             if (block == '\u002D\u002D\u002D') {
                 result.push(new Nodes.HorizontalRule());
                 continue;
             }
 
-            let blocks = new BlockParser(block || "").parse();
+            let blocks = new BlockParser(block).parse();
             if (blocks.length > 0)
                 result.push(...this.groupNodes(blocks));
         }

@@ -113,4 +113,30 @@ Another paragraph with more **BOLD** text.
             new Nodes.HorizontalRule(),
         ]);
     });
+
+    test('Full Test', () => {
+        let text = `# Heading 1
+
+        **Bold text**
+        *Italic text*
+
+        [**Important** Infos *here*](https://example.com/)`;
+        let parser = new TypedParser();
+        let nodes = parser.parse(text);
+
+        expect(nodes).toStrictEqual([
+            new Nodes.HeadingNode("Heading 1", 1),
+            new Nodes.ParagraphNode([
+                new Nodes.BoldNode("Bold text"),
+                new Nodes.ItalicNode("Italic text"),
+            ]),
+            new Nodes.ParagraphNode([
+                new Nodes.LinkNode([
+                    new Nodes.BoldNode("Important"),
+                    new Nodes.TextNode(" Infos "),
+                    new Nodes.ItalicNode("here"),
+                ], "https://example.com/"),
+            ]),
+        ]);
+    });
 });

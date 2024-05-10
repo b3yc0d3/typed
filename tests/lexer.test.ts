@@ -91,11 +91,6 @@ describe('Lexer', () => {
         expect(lexer.token).toBe('foo');
     });
 
-    test('should return null if initialized with an empty expression', () => {
-        const lexer = Lexer.init('', ' ');
-        expect(lexer).toBeNull();
-    });
-
     test('should tokenize expression string correctly', () => {
         const expression = 'foo bar baz';
         const splitter = ' ';
