@@ -34,13 +34,20 @@ export class CodeNode extends TextNode {
 }
 
 export class LinkNode extends MarkdownNode {
-    title: MarkdownNode[];
+    text: MarkdownNode[];
     url: string;
-    constructor(title: MarkdownNode[], url: string) {
+    constructor(text: MarkdownNode[], url: string) {
         super("LinkNode");
 
-        this.title = title;
+        this.text = text;
         this.url = url;
+    }
+}
+
+export class ImageNode extends LinkNode {
+    constructor(text: MarkdownNode[], url: string) {
+        super(text, url);
+        this.nodeType = "ImageNode";
     }
 }
 

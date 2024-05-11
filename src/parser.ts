@@ -106,37 +106,79 @@ export class FragmentParser {
             } else if (char == '\u005B') {
                 rewindCount = 1;
 
-                let title: string = "";
+                let text: string = "";
                 let url: string = "";
 
                 let nestedChar: string | null;
                 while ((nestedChar = lexer.next()) != null) {
+                    rewindCount++;
                     if (nestedChar == '\u005D') {
                         hasTerminated = true;
                         break;
                     }
-                    title += nestedChar;
-                    rewindCount++;
+                    text += nestedChar;
                 }
 
                 if (hasTerminated == true && lexer.currentCharacter == '\u0028') {
                     hasTerminated = false;
                     lexer.next();
+                    rewindCount++;
 
                     nestedChar = "";
                     while ((nestedChar = lexer.next()) != null) {
+                        rewindCount++;
                         if (nestedChar == '\u0029') {
                             hasTerminated = true;
                             break;
                         }
                         url += nestedChar;
-                        rewindCount++;
                     }
 
                     if (hasTerminated == true) {
-                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(title).parse();
+                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(text).parse();
 
                         result.push(new Nodes.LinkNode(titleNodes, url));
+                        continue;
+                    }
+
+                }
+
+                lexer.rewindCharacters(rewindCount);
+            } else if (char == '\u0021' && lexer.peakNext() == '\u005B') {
+                lexer.next();
+                rewindCount = 2;
+
+                let text: string = "";
+                let url: string = "";
+                let nestedChar: string | null;
+                while ((nestedChar = lexer.next()) != null) {
+                    rewindCount++;
+                    if (nestedChar == '\u005D') {
+                        hasTerminated = true;
+                        break;
+                    }
+                    text += nestedChar;
+                }
+
+                if (hasTerminated == true && lexer.currentCharacter == '\u0028') {
+                    hasTerminated = false;
+                    lexer.next();
+                    rewindCount++;
+
+                    nestedChar = "";
+                    while ((nestedChar = lexer.next()) != null) {
+                        rewindCount++;
+                        if (nestedChar == '\u0029') {
+                            hasTerminated = true;
+                            break;
+                        }
+                        url += nestedChar;
+                    }
+
+                    if (hasTerminated == true) {
+                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(text).parse();
+
+                        result.push(new Nodes.ImageNode(titleNodes, url));
                         continue;
                     }
 

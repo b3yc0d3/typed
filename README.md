@@ -19,10 +19,10 @@ npm i typed
 - [x] Bold
 - [x] Headings (1-3)
 - [x] Link
-- [ ] Image
+- [x] Image
 - [ ] Blockquote
-- [ ] List
-- [ ] Numbered List
+- [ ] Unordered List
+- [ ] Ordered List
 - [x] Horizontal Rule
 - [x] Inline Code
 - [ ] Code Block
