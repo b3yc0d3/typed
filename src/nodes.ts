@@ -3,14 +3,13 @@ export class MarkdownNode {
 }
 
 export class TextNode extends MarkdownNode {
-    text: string | string;
+    text: string;
 
     constructor(text: string) {
         super("TextNode");
         this.text = text;
     }
 }
-
 
 export class BoldNode extends TextNode {
     constructor(text: string) {
@@ -34,9 +33,9 @@ export class CodeNode extends TextNode {
 }
 
 export class LinkNode extends MarkdownNode {
-    text: MarkdownNode[];
+    text: Array<MarkdownNode>;
     url: string;
-    constructor(text: MarkdownNode[], url: string) {
+    constructor(text: Array<MarkdownNode>, url: string) {
         super("LinkNode");
 
         this.text = text;
@@ -45,7 +44,7 @@ export class LinkNode extends MarkdownNode {
 }
 
 export class ImageNode extends LinkNode {
-    constructor(text: MarkdownNode[], url: string) {
+    constructor(text: Array<MarkdownNode>, url: string) {
         super(text, url);
         this.nodeType = "ImageNode";
     }
@@ -59,9 +58,9 @@ export class HorizontalRule extends MarkdownNode {
 }
 
 export class ParagraphNode extends MarkdownNode {
-    nodes: MarkdownNode[];
+    nodes: Array<MarkdownNode>;
 
-    constructor(nodes: MarkdownNode[]) {
+    constructor(nodes: Array<MarkdownNode>) {
         super("ParagraphNode");
         this.nodes = nodes;
     }
@@ -69,11 +68,11 @@ export class ParagraphNode extends MarkdownNode {
 
 export class HeadingNode extends MarkdownNode {
     level: number;
-    text: string;
+    textNodes: Array<MarkdownNode>;
 
-    constructor(text: string, level: number) {
+    constructor(textNodes: Array<MarkdownNode>, level: number) {
         super("HeadingNode");
-        this.text = text;
+        this.textNodes = textNodes;
         this.level = level;
     }
 }

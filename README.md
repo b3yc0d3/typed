@@ -15,20 +15,30 @@ npm i typed
 ```
 
 ## Features
-- [x] Italics
-- [x] Bold
-- [x] Headings (1-3)
-- [x] Link
-- [x] Image
-- [ ] Blockquote
-- [ ] Unordered List
+### Basic Syntax
+- [x] Headings
+- [x] Bold `**bold text**`
+- [x] Italics `*italicized text*`
+- [ ] Blockquote `> blockquote`
 - [ ] Ordered List
-- [x] Horizontal Rule
+- [ ] Unordered List
 - [x] Inline Code
-- [ ] Code Block
+- [x] Horizontal Rule `---`
+- [x] Link `[title](https://example.com/)`
+- [x] Image `![title](image.png)`
+
+### Extended Syntax
 - [ ] Table
+- [ ] Code Block
+- [ ] Footnote
+- [ ] Heading ID `### My Great Heading {#custom-id}`
+- [ ] Definition List
+- [ ] Strikethrough `~~The world is flat.~~`
 - [ ] Task List
-- [ ] Highlight 
+- [ ] Emoji `That is funny! :joy:`
+- [ ] Highlight  `I need to highlight these ==very important words==`
+- [ ] Subscript `H~2~O`
+- [ ] Superscript `X^2^`
 
 
 ## Contributing
@@ -37,5 +47,5 @@ Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.\
 Pleas make pull requests *only* to `dev` branch.
 
-## ## License
+## License
 This project is open source and available under the [MIT License](LICENSE).

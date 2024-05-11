@@ -1,12 +1,12 @@
 export class Lexer {
-    private lexems: string[] = [];
+    private lexems: Array<string> = [];
     private index: number = 0;
 
     /**
      * Create new Lexer for iterating the given lexems.
      * @param lexems Tokens to iterate
      */
-    constructor(lexems: string[]) {
+    constructor(lexems: Array<string>) {
         if (!lexems.length) {
             throw new Error("Lexer should have at least one value");
         }

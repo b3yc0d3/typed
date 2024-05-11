@@ -57,7 +57,9 @@ describe("BlockParser", () => {
         let nodes = parser.parse();
 
         expect(nodes).toStrictEqual([
-            new Nodes.HeadingNode("Heading 1", 1),
+            new Nodes.HeadingNode([
+                new Nodes.TextNode("Heading 1"),
+            ], 1),
         ]);
     });
 });
@@ -127,7 +129,9 @@ Another paragraph with more **BOLD** text.
         let nodes = parser.parse(text);
 
         expect(nodes).toStrictEqual([
-            new Nodes.HeadingNode("Heading 1", 1),
+            new Nodes.HeadingNode([
+                new Nodes.TextNode("Heading 1"),
+            ], 1),
             new Nodes.ParagraphNode([
                 new Nodes.BoldNode("Bold text"),
                 new Nodes.ItalicNode("Italic text"),

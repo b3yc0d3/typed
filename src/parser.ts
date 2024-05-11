@@ -8,16 +8,16 @@ export class FragmentParser {
         this.fragment = fragment;
     }
 
-    parse(): Nodes.MarkdownNode[] {
+    parse(): Array<Nodes.MarkdownNode> {
         if (this.fragment == "" || !this.fragment.replace(/\s/g, '').length)
             return [];
 
-        var result: Nodes.MarkdownNode[] = [];
+        var result: Array<Nodes.MarkdownNode> = [];
         var lexer = new FragmentLexer(this.fragment);
 
         let char: string | undefined | null;
-        let content: string = "";
-        let hasTerminated: boolean = false;
+        let content = "";
+        let hasTerminated = false;
         var rewindCount = 0;
 
         while ((char = lexer.next()) !== null) {
@@ -51,9 +51,7 @@ export class FragmentParser {
                     lexer.rewindCharacters(rewindCount);
                 }
             } else if (char == '\u002A' && lexer.peakNext() != '\u002A') {
-                let content: string = "";
-                let hasTerminated: boolean = false;
-                let rewindCount = 1;
+                rewindCount = 1;
 
                 let nestedChar: string | null = "";
                 while ((nestedChar = lexer.next()) != null) {
@@ -78,9 +76,7 @@ export class FragmentParser {
                     lexer.rewindCharacters(rewindCount);
                 }
             } else if (char == '\u0060') {
-                let content: string = "";
-                let hasTerminated: boolean = false;
-                let rewindCount = 1;
+                rewindCount = 1;
 
                 let nestedChar: string | null = "";
                 while ((nestedChar = lexer.next()) != null) {
@@ -106,8 +102,8 @@ export class FragmentParser {
             } else if (char == '\u005B') {
                 rewindCount = 1;
 
-                let text: string = "";
-                let url: string = "";
+                let text = "";
+                let url = "";
 
                 let nestedChar: string | null;
                 while ((nestedChar = lexer.next()) != null) {
@@ -135,7 +131,7 @@ export class FragmentParser {
                     }
 
                     if (hasTerminated == true) {
-                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(text).parse();
+                        const titleNodes = new FragmentParser(text).parse();
 
                         result.push(new Nodes.LinkNode(titleNodes, url));
                         continue;
@@ -148,8 +144,8 @@ export class FragmentParser {
                 lexer.next();
                 rewindCount = 2;
 
-                let text: string = "";
-                let url: string = "";
+                let text = "";
+                let url = "";
                 let nestedChar: string | null;
                 while ((nestedChar = lexer.next()) != null) {
                     rewindCount++;
@@ -176,7 +172,7 @@ export class FragmentParser {
                     }
 
                     if (hasTerminated == true) {
-                        let titleNodes: Nodes.MarkdownNode[] = new FragmentParser(text).parse();
+                        let titleNodes = new FragmentParser(text).parse();
 
                         result.push(new Nodes.ImageNode(titleNodes, url));
                         continue;
@@ -206,20 +202,20 @@ export class BlockParser {
         this.block = text;
     }
 
-    parse(): Nodes.MarkdownNode[] {
+    parse(): Array<Nodes.MarkdownNode> {
         var lexer = Lexer.init(this.block, "\n");
-
-        var result: Nodes.MarkdownNode[] = [];
+        var result: Array<Nodes.MarkdownNode> = [];
 
         let fragment: string | undefined | null;
         while ((fragment = lexer.next()) !== null) {
             fragment = fragment.trim();
 
             if (fragment.startsWith("\u0023")) {
-                let content = fragment.replace(/\u0023/g, '').trim();
-                let headingLevel = (fragment.length - content.length) - 1;
+                const text = fragment.replace(/\u0023/g, '').trim();
+                const textNodes = new FragmentParser(text).parse();
+                let headingLevel = (fragment.length - text.length) - 1;
 
-                result.push(new Nodes.HeadingNode(content, headingLevel));
+                result.push(new Nodes.HeadingNode(textNodes, headingLevel));
                 continue;
             }
 
@@ -237,13 +233,13 @@ export class TypedParser {
 
     constructor() { }
 
-    parse(text: string): Nodes.MarkdownNode[] {
+    parse(text: string): Array<Nodes.MarkdownNode> {
         this.text = text;
         if (!this.text)
             return [];
 
         let lexer = Lexer.init(text.trim(), "\n\n");
-        var result: Nodes.MarkdownNode[] = [];
+        var result: Array<Nodes.MarkdownNode> = [];
 
         let block: string | null | undefined = "";
         while ((block = lexer.next()) !== null) {
@@ -265,9 +261,9 @@ export class TypedParser {
      * @param nodes List of MarkdownNodes
      * @returns List of grouped MarkdownNodes
      */
-    private groupNodes(nodes: Nodes.MarkdownNode[]): Nodes.MarkdownNode[] {
-        var result: Nodes.MarkdownNode[] = [];
-        const getLastNode = (nl: Nodes.MarkdownNode[]): Nodes.MarkdownNode | null => {
+    private groupNodes(nodes: Array<Nodes.MarkdownNode>): Array<Nodes.MarkdownNode> {
+        var result: Array<Nodes.MarkdownNode> = [];
+        const getLastNode = (nl: Array<Nodes.MarkdownNode>): Nodes.MarkdownNode | null => {
             if (nl.length <= 0)
                 return null;
 
