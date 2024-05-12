@@ -62,6 +62,20 @@ describe("BlockParser", () => {
             ], 1),
         ]);
     });
+
+    test('Blockquote', () => {
+        let text = "> Blockquote 1\n> Blockquote 2\n>Blockquote 3";
+        let parser = new BlockParser(text);
+        let nodes = parser.parse();
+
+        expect(nodes).toStrictEqual([
+            new Nodes.BlockQuote([
+                new Nodes.TextNode("Blockquote 1"),
+                new Nodes.TextNode("Blockquote 2"),
+                new Nodes.TextNode("Blockquote 3"),
+            ]),
+        ]);
+    });
 });
 
 describe("TypedParser", () => {
@@ -124,7 +138,8 @@ Another paragraph with more **BOLD** text.
         **Bold text**
         *Italic text*
 
-        [**Important** Infos *here*](https://example.com/)`;
+        [**Important** Infos *here*](https://example.com/)
+        > A little blockquote`;
         let parser = new TypedParser();
         let nodes = parser.parse(text);
 
@@ -142,6 +157,9 @@ Another paragraph with more **BOLD** text.
                     new Nodes.TextNode(" Infos "),
                     new Nodes.ItalicNode("here"),
                 ], "https://example.com/"),
+            ]),
+            new Nodes.BlockQuote([
+                new Nodes.TextNode("A little blockquote"),
             ]),
         ]);
     });

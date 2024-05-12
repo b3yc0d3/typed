@@ -50,6 +50,13 @@ export class Lexer {
         return token;
     }
 
+    peakPrevious(): string | null {
+        if (this.index > 0)
+            return this.lexems[this.index - 1]
+
+        return null;
+    }
+
     /**
      * Returns true if the end is reached, therefore all elements were iterated.
      */

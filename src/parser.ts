@@ -217,6 +217,20 @@ export class BlockParser {
 
                 result.push(new Nodes.HeadingNode(textNodes, headingLevel));
                 continue;
+            } else if (fragment.trimStart().startsWith("\u003E")) {
+                const text = fragment.replace(/^(\t|\s+)?>/g, '').trim();
+                const textNodes = new FragmentParser(text).parse();
+                const bqNode = new Nodes.BlockQuote(textNodes);
+
+                let lastNode = result[result.length - 1];
+
+                if (lastNode instanceof Nodes.BlockQuote) {
+                    (result[result.length - 1] as Nodes.BlockQuote).textNodes.push(...textNodes);
+                    continue;
+                }
+
+                result.push(bqNode);
+                continue;
             }
 
             let fragments = new FragmentParser(fragment.trim()).parse();
@@ -274,6 +288,7 @@ export class TypedParser {
             let lastNode = getLastNode(result);
 
             switch (true) {
+                case node instanceof Nodes.BlockQuote:
                 case node instanceof Nodes.HeadingNode:
                     result.push(node);
                     continue;

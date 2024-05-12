@@ -19,7 +19,7 @@ npm i typed
 - [x] Headings
 - [x] Bold `**bold text**`
 - [x] Italics `*italicized text*`
-- [ ] Blockquote `> blockquote`
+- [x] Blockquote `> blockquote`
 - [ ] Ordered List
 - [ ] Unordered List
 - [x] Inline Code

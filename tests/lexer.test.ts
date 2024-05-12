@@ -105,6 +105,17 @@ describe('Lexer', () => {
         expect(lexer.next()).toBeNull();
     });
 
+    test('should return null when calling peakPrevious() at the beginning', () => {
+        const lexer = new Lexer(['foo', 'bar']);
+        expect(lexer.peakPrevious()).toBeNull();
+    });
+
+    test('should return foo when calling peakPrevious()', () => {
+        const lexer = new Lexer(['foo', 'bar']);
+        lexer.next();
+        expect(lexer.peakPrevious()).toBe('foo');
+    });
+
     test('should return true for isAtEnd() when at the end', () => {
         const lexer = new Lexer(['foo']);
         lexer.next();

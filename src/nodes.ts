@@ -76,3 +76,12 @@ export class HeadingNode extends MarkdownNode {
         this.level = level;
     }
 }
+
+export class BlockQuote extends MarkdownNode {
+    textNodes: Array<MarkdownNode>;
+
+    constructor(textNodes: Array<MarkdownNode>) {
+        super("BlockQuote");
+        this.textNodes = textNodes;
+    }
+}
