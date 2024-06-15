@@ -1,5 +1,6 @@
 import * as Nodes from "./nodes";
 import { FragmentLexer, Lexer } from "./lexer";
+import * as utils from "./utils";
 
 export class FragmentParser {
     fragment: string;
@@ -208,28 +209,37 @@ export class BlockParser {
 
         let fragment: string | undefined | null;
         while ((fragment = lexer.next()) !== null) {
-            fragment = fragment.trim();
 
-            if (fragment.startsWith("\u0023")) {
+            if (fragment.trimStart().startsWith("\u0023")) {
                 const text = fragment.replace(/\u0023/g, '').trim();
                 const textNodes = new FragmentParser(text).parse();
-                let headingLevel = (fragment.length - text.length) - 1;
+                let headingLevel = (fragment.trim().length - text.length) - 1;
 
                 result.push(new Nodes.HeadingNode(textNodes, headingLevel));
                 continue;
             } else if (fragment.trimStart().startsWith("\u003E")) {
                 const text = fragment.replace(/^(\t|\s+)?>/g, '').trim();
                 const textNodes = new FragmentParser(text).parse();
-                const bqNode = new Nodes.BlockQuote(textNodes);
+                const bqNode = new Nodes.BlockQuoteNode(textNodes);
 
                 let lastNode = result[result.length - 1];
 
-                if (lastNode instanceof Nodes.BlockQuote) {
-                    (result[result.length - 1] as Nodes.BlockQuote).textNodes.push(...textNodes);
+                if (lastNode instanceof Nodes.BlockQuoteNode) {
+                    (result[result.length - 1] as Nodes.BlockQuoteNode).textNodes.push(...textNodes);
                     continue;
                 }
 
                 result.push(bqNode);
+                continue;
+            } else if (fragment.trimStart().startsWith("\u002D")) {
+                const depth = utils.getIndentationDepth(fragment);
+                const text = fragment.replace(/^.*\u002D\u0020/gm, '');
+                const textNodes = new FragmentParser(text).parse();
+                const liNode = new Nodes.ListItemNode(textNodes, [], {
+                    "nestedLevel": depth,
+                });
+
+                result.push(liNode);
                 continue;
             }
 
@@ -277,22 +287,24 @@ export class TypedParser {
      */
     private groupNodes(nodes: Array<Nodes.MarkdownNode>): Array<Nodes.MarkdownNode> {
         var result: Array<Nodes.MarkdownNode> = [];
-        const getLastNode = (nl: Array<Nodes.MarkdownNode>): Nodes.MarkdownNode | null => {
-            if (nl.length <= 0)
-                return null;
-
-            return nl[nl.length - 1];
-        }
 
         for (let node of nodes) {
-            let lastNode = getLastNode(result);
+            let lastNode = utils.arrayLastItem(result);
 
             switch (true) {
-                case node instanceof Nodes.BlockQuote:
+                case node instanceof Nodes.ListItemNode:
+                    const cNode = node as Nodes.ListItemNode;
+                    if (!cNode.isOrdered && !(lastNode instanceof Nodes.UnorderedListNode)) {
+                        result.push(new Nodes.UnorderedListNode([cNode]));
+                        break;
+                    } else if (!cNode.isOrdered && lastNode instanceof Nodes.UnorderedListNode) {
+                        lastNode.push(cNode);
+                    }
+                    break;
+                case node instanceof Nodes.BlockQuoteNode:
                 case node instanceof Nodes.HeadingNode:
                     result.push(node);
-                    continue;
-
+                    break;
                 default:
                     if (!(lastNode instanceof Nodes.ParagraphNode)) {
                         result.push(new Nodes.ParagraphNode([node]));

@@ -1,3 +1,5 @@
+import * as utils from "./utils";
+
 export class MarkdownNode {
     constructor(public nodeType: string) { }
 }
@@ -77,11 +79,65 @@ export class HeadingNode extends MarkdownNode {
     }
 }
 
-export class BlockQuote extends MarkdownNode {
+export class BlockQuoteNode extends MarkdownNode {
     textNodes: Array<MarkdownNode>;
 
     constructor(textNodes: Array<MarkdownNode>) {
-        super("BlockQuote");
+        super("BlockQuoteNode");
         this.textNodes = textNodes;
+    }
+}
+
+export class ListItemNode extends MarkdownNode {
+    isTask = false;
+    isOrdered = false;
+    orderedIndex = 0;
+    nestedLevel = 0;
+    textNodes: Array<MarkdownNode>;
+    childNodes: Array<ListItemNode>;
+
+    constructor(textNodes: Array<MarkdownNode>, childNodes: Array<ListItemNode>, {nestedLevel = 0, isTask = false, isOrdered = false, orderedIndex = 0 } = {}) {
+        super("ListItemNode");
+
+        this.textNodes = textNodes;
+        this.childNodes = childNodes;
+        this.isTask = isTask;
+        this.nestedLevel = nestedLevel;
+
+        if (isOrdered) {
+            this.isOrdered = isOrdered;
+            this.orderedIndex = orderedIndex;
+        }
+    }
+
+    push(...child: Array<ListItemNode>) {
+        this.childNodes.push(...child);
+    }
+}
+
+export class UnorderedListNode extends MarkdownNode {
+    items: Array<ListItemNode>;
+    
+    constructor(items: Array<ListItemNode>) {
+        super("UnorderedListNode");
+        this.items = items;
+    }
+
+    push(item: ListItemNode) {
+        const depth = item.nestedLevel;
+
+        if (!(depth > 0)) {
+            this.items.push(item);
+            return;
+        }
+
+        let lastItem = utils.arrayLastItem(this.items) as ListItemNode;
+        for(let i = 0; i < depth - 1; i++) {
+            if (lastItem.childNodes.length > 0) {
+                lastItem = utils.arrayLastItem(lastItem.childNodes);
+            }
+        }
+
+        lastItem.push(item);
     }
 }

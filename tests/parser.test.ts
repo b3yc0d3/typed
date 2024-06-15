@@ -69,7 +69,21 @@ describe("BlockParser", () => {
         let nodes = parser.parse();
 
         expect(nodes).toStrictEqual([
-            new Nodes.BlockQuote([
+            new Nodes.BlockQuoteNode([
+                new Nodes.TextNode("Blockquote 1"),
+                new Nodes.TextNode("Blockquote 2"),
+                new Nodes.TextNode("Blockquote 3"),
+            ]),
+        ]);
+    });
+
+    test('Blockquote', () => {
+        let text = "> Blockquote 1\n> Blockquote 2\n>Blockquote 3";
+        let parser = new BlockParser(text);
+        let nodes = parser.parse();
+
+        expect(nodes).toStrictEqual([
+            new Nodes.BlockQuoteNode([
                 new Nodes.TextNode("Blockquote 1"),
                 new Nodes.TextNode("Blockquote 2"),
                 new Nodes.TextNode("Blockquote 3"),
@@ -158,8 +172,31 @@ Another paragraph with more **BOLD** text.
                     new Nodes.ItalicNode("here"),
                 ], "https://example.com/"),
             ]),
-            new Nodes.BlockQuote([
+            new Nodes.BlockQuoteNode([
                 new Nodes.TextNode("A little blockquote"),
+            ]),
+        ]);
+    });
+
+    test('Parsing Unordered List', () => {
+        let text = `
+- Item 1
+    - Item 1.1
+    - Item 1.2
+        - Item 1.2.1
+- Item 2`;
+        let parser = new TypedParser();
+        let nodes = parser.parse(text);
+
+        expect(nodes).toStrictEqual([
+            new Nodes.UnorderedListNode([
+                new Nodes.ListItemNode([new Nodes.TextNode("Item 1")], [
+                    new Nodes.ListItemNode([new Nodes.TextNode("Item 1.1")], [], { "nestedLevel": 1 }),
+                    new Nodes.ListItemNode([new Nodes.TextNode("Item 1.2")], [
+                        new Nodes.ListItemNode([new Nodes.TextNode("Item 1.2.1")], [], { "nestedLevel": 2 }),
+                    ], { "nestedLevel": 1 }),
+                ], { "nestedLevel": 0 }),
+                new Nodes.ListItemNode([new Nodes.TextNode("Item 2")], [], { "nestedLevel": 0 }),
             ]),
         ]);
     });

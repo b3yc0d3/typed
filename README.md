@@ -20,8 +20,10 @@ npm i typed
 - [x] Bold `**bold text**`
 - [x] Italics `*italicized text*`
 - [x] Blockquote `> blockquote`
+- [X] Unordered List
+    - [x] 1D
+    - [X] Nested
 - [ ] Ordered List
-- [ ] Unordered List
 - [x] Inline Code
 - [x] Horizontal Rule `---`
 - [x] Link `[title](https://example.com/)`
